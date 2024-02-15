@@ -38,7 +38,7 @@ const loginUser = async (req, res) => {
   let user = await User.findOne({ username: userCredentials.username });
   //if invalid username
   if (user === null) {
-    return res.status(401).send({ message: "Invalid username" });
+    return res.status(200).send({ message: "Invalid username" });
   }
   //if username is found, compare passwords
   const result = await bcryptjs.compare(
@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
   );
   //if pasword not matched
   if (result === false) {
-    return res.status(401).send({ message: "Invalid password" });
+    return res.status(200).send({ message: "Invalid password" });
   }
   //Create jwt token and sign it
   const signedToken = jwt.sign(

@@ -1,7 +1,9 @@
 //create express app
 const exp=require('express')
 const app=exp();
-
+const path=require('path')
+//join with react
+app.use(exp.static(path.join(__dirname,'../client/build')))
 //configure environment variables
 require('dotenv').config()
 //add body parsing middleware

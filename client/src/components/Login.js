@@ -1,32 +1,22 @@
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { userLoginContext } from "../contexts/userLoginContext";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { userLoginLifeCycle } from "../redux/slices/userLoginSlice";
 
 function Login() {
   let { register, handleSubmit } = useForm();
   let navigate = useNavigate();
-  let [
-    currentUser,
-    setCurrentUser,
-    userLoginStatus,
-    setUserLoginStatus,
-    onUserLogin,
-    error
-  ] = useContext(userLoginContext);
+  let dispatch = useDispatch();
 
-  useEffect(() => {
-    if (userLoginStatus === true) {
-      navigate("/user-profile");
-    }
-  },[userLoginStatus]);
+  const onUserLogin = (userCred) => {
+    dispatch(userLoginLifeCycle(userCred));
+  };
 
- // console.log(userLoginStatus);
   return (
     <div>
       <h1 className="display-3 text-center text-info">User Login</h1>
 
-       {error.length!==0&&<p className="fs-2 text-center text-danger">{error}</p>} 
       <form
         className="w-50 mx-auto bg-light p-3 mt-5"
         onSubmit={handleSubmit(onUserLogin)}

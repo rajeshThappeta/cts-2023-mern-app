@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {hashSync} from 'bcryptjs'
+
 
 function Register() {
   let { register, handleSubmit } = useForm();
@@ -11,27 +11,19 @@ function Register() {
 
   async function onUserRegister(userObj) {
     try {
-      //search for duplicate user
-      let res1 = await axios.get(
-        `http://localhost:4000/users?username=${userObj.username}`
+      //store in local api
+      let res = await axios.post(
+        "http://localhost:4000/user-api/user",
+        userObj
       );
-      let usersList = res1.data;
-      //if usersList is empty, it means no user existed with same username
-      if (usersList.length === 0) {
-        //hash the password
-        let hashedPassword=hashSync(userObj.password,5)
-        //replace plain password with hashed password
-        userObj.password=hashedPassword;
-        //store in local api
-        let res = await axios.post("http://localhost:4000/users", userObj);
-        if (res.status === 201) {
-          //navigate to Login component
-          navigate("/login");
-        }
+      if (res.status === 201) {
+        //navigate to Login component
+        navigate("/login");
       }
-      //a user already exsted in API 
+
+      //a user already exsted in API
       else {
-        setError("User already existed!");
+        setError(res.data.message);
       }
     } catch (err) {
       setError(err.message);
@@ -98,19 +90,6 @@ function Register() {
           />
         </div>
 
-         {/* dprofile pic*/}
-         <div className="mb-4">
-          <label htmlFor="profileImg" className="form-label">
-            Enter path of profile image
-          </label>
-          <input
-            type="text"
-            id="profileImg"
-            {...register("profileImg")}
-            className="form-control mb-4"
-            placeholder="Paste profile image URL here..."
-          />
-        </div>
 
         <button className="btn btn-success d-block mx-auto">Register</button>
       </form>
