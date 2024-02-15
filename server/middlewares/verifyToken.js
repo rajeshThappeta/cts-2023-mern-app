@@ -14,7 +14,7 @@ function verifyToken(req,res,next){
         next()
 
         }else{
-            res.send({message:"Unauthorised access"})
+            res.status(403).send({message:"Unauthorised access"})
         }
 
 }

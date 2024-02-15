@@ -1,51 +1,24 @@
-//create express application
-const exp = require("express");
-const app = exp();
+//create express app
+const exp=require('express')
+const app=exp();
 
+//configure environment variables
+require('dotenv').config()
+//add body parsing middleware
+app.use(exp.json())
 
+//import api
+const userApp=require('./APIs/user-api');
 
-
-//add body parser
-//app.use(exp.json());
-
-//get mongodb client
-const mc=require('mongodb').MongoClient;
-//connect to mongodb server
-mc.connect('mongodb://localhost:27017')
-.then((client)=>{
-  
-  //get db object
-  const dbObj=client.db('sampledb')
-  //get collection obj
-  const usersCollection=dbObj.collection('users')
-  //add usersCoolection to express onj(app)
-  app.set('usersCollection',usersCollection)
-  
-  console.log("connected to database server")
-})
-.catch(err=>{
-  console.log("err in DB connect",err)
-})
-
-
-
-//import userApp & productApp
-const userApp=require('./APIs/userApi');
-const productApp=require('./APIs/productApi')
-
-
-
-//if path starts woth /user-api, execute userApp
+//forward req to userApp when path starts with '/user-api'
 app.use('/user-api',userApp)
-app.use('/product-api',productApp)
 
-//error handling middleware
-function errorHandler(err, req, res, next) {
-  res.send({ message: "error occurred", payload: err });
-}
 
-app.use(errorHandler);
+//error handler
+app.use((err,req,res,next)=>{
+    res.send({message:'error occuurred',payload:err.message})
+})
 
-//assign port numbrt
-const PORT=process.env.PORT||4000;
-app.listen(PORT, () => console.log("http server listenning on port 4000..."));
+//asign port number
+const PORT=process.env.PORT || 4000;
+app.listen(PORT,()=>console.log(`web server lkisening on port ${PORT}`))
